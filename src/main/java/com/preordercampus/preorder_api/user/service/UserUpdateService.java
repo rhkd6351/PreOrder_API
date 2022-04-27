@@ -1,17 +1,56 @@
 package com.preordercampus.preorder_api.user.service;
 
 
-import com.limbae.preorder.anabada_api.user.domain.UserVO;
-import com.limbae.preorder.anabada_api.user.repository.UserRepository;
+import com.preordercampus.preorder_api.user.domain.AuthVO;
+import com.preordercampus.preorder_api.user.domain.UserVO;
+import com.preordercampus.preorder_api.user.dto.CreateUser;
+import com.preordercampus.preorder_api.user.repository.UserRepository;
+import javassist.NotFoundException;
+import javassist.bytecode.DuplicateMemberException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
 
 @Service
 public class UserUpdateService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final AuthFindService authFindService;
+    private final PasswordEncoder passwordEncoder;
 
-    public Long save(UserVO user){
-        return 1L;
+    public UserUpdateService(UserRepository userRepository, AuthFindService authFindService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.authFindService = authFindService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    public Long saveStudentUser(CreateUser.Request request) throws NotFoundException, DuplicateMemberException {
+
+        if(userRepository.existsByEmail(request.getEmail()))
+            throw new DuplicateMemberException("email duplicated");
+
+
+        AuthVO auth = authFindService.findByName(AuthVO.Type.ROLE_USER.value());
+
+        try{
+            UserVO.Oauth.valueOf(request.getOauth());
+        }catch (IllegalArgumentException e){
+            throw new NotFoundException("invalid oauth name");
+        }
+
+        UserVO user = UserVO.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .activated(true)
+                .auth(auth)
+                .type(UserVO.Type.USER_STUDENT.value())
+                .oauth(UserVO.Oauth.valueOf(request.getOauth()).value())
+                .build();
+
+        return userRepository.save(user).getIdx();
     }
 
 }
