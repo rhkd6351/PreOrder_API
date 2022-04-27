@@ -1,35 +1,35 @@
 package com.preordercampus.preorder_api.user.dto;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateUser {
 
-    @Builder
     @Getter
-    public class Request{
-        @NotBlank
+    @Builder
+    public static class Request{
+
+        @NotBlank(message = "email이 입력되지 않았습니다.")
+        @Email(message = "이메일 형식이 잘못되었습니다.")
         private String email;
 
-        @NotBlank
+        @NotBlank(message = "password가 입력되지 않았습니다.")
+        @Size(min = 8, message = "비밀번호는 최소 8자 이상 이어야 합니다.")
         private String password;
 
-        @NotBlank
+        @NotBlank(message = "OAuth 정보가 입력되지 않았습니다.")
         private String oauth;
     }
 
     @Getter
-    public class Response{
+    @AllArgsConstructor
+    public static class Response{
         Long id;
-
-        public Response(Long id) {
-            this.id = id;
-        }
     }
 }

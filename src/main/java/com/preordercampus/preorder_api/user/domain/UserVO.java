@@ -3,6 +3,7 @@ package com.preordercampus.preorder_api.user.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "USER_TB")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class UserVO {
 
 
@@ -45,8 +47,9 @@ public class UserVO {
 
     //create constructor
     @Builder
-    public UserVO(String email, String type, boolean activated, String oauth, AuthVO auth) {
+    public UserVO(String email, String password, String type, boolean activated, String oauth, AuthVO auth) {
         this.email = email;
+        this.password = password;
         this.type = type;
         this.activated = activated;
         this.oauth = oauth;
@@ -54,14 +57,36 @@ public class UserVO {
     }
 
     public enum Type{
-        USER_STUDENT, USER_RESTAURANT
+        USER_STUDENT("STUDENT"),
+        USER_RESTAURANT("RESTAURANT");
+
+        final String value;
+
+        Type(String value) {
+            this.value = value;
+        }
+        public String value(){
+            return value;
+        }
     }
 
     public enum Activated{
-        DEACTIVATED, ACTIVATED
+        INACTIVATED, ACTIVATED
     }
 
     public enum Oauth{
-        EMAIL, KAKAO, GOOGLE, FACEBOOK
+        EMAIL("EMAIL"),
+        KAKAO("KAKAO"),
+        GOOGLE("GOOGLE"),
+        FACEBOOK("FACEBOOK");
+
+        final String value;
+
+        Oauth(String value) {
+            this.value = value;
+        }
+        public String value(){
+            return value;
+        }
     }
 }
