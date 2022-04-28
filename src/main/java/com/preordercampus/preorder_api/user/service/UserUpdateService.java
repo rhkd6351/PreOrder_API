@@ -18,11 +18,13 @@ public class UserUpdateService {
     private final UserRepository userRepository;
     private final AuthFindService authFindService;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
-    public UserUpdateService(UserRepository userRepository, AuthFindService authFindService, PasswordEncoder passwordEncoder) {
+    public UserUpdateService(UserRepository userRepository, AuthFindService authFindService, PasswordEncoder passwordEncoder, MailService mailService) {
         this.userRepository = userRepository;
         this.authFindService = authFindService;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
     }
 
     @Transactional
@@ -49,7 +51,10 @@ public class UserUpdateService {
                 .oauth(UserVO.Oauth.valueOf(request.getOauth()).value())
                 .build();
 
-        return userRepository.save(user).getIdx();
+        Long idx = userRepository.save(user).getIdx();
+        mailService.sendIDVerifyMail(user.getEmail());
+
+        return idx;
     }
 
 }
