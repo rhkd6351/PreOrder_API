@@ -89,4 +89,8 @@ public class UserVO {
             return value;
         }
     }
+
+    public void setIdx(Long idx) {
+        this.idx = idx;
+    }
 }
