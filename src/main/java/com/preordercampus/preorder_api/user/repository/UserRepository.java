@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<UserVO, Long> {
 
     public boolean existsByEmail(String email);
 
+    public Optional<UserVO> findByVerifyCode(String verifyCode);
+
 }

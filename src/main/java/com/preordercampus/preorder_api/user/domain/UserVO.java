@@ -45,15 +45,19 @@ public class UserVO {
     @JoinColumn(name = "auth_fk", nullable = false, updatable = true)
     private AuthVO auth;
 
+    @Column(name = "verify_code", nullable = true, updatable = true)
+    private String verifyCode;
+
     //create constructor
     @Builder
-    public UserVO(String email, String password, String type, boolean activated, String oauth, AuthVO auth) {
+    public UserVO(String email, String password, String type, boolean activated, String oauth, String verifyCode, AuthVO auth) {
         this.email = email;
         this.password = password;
         this.type = type;
         this.activated = activated;
         this.oauth = oauth;
         this.auth = auth;
+        this.verifyCode = verifyCode;
     }
 
     public enum Type{
@@ -92,5 +96,9 @@ public class UserVO {
 
     public void setIdx(Long idx) {
         this.idx = idx;
+    }
+
+    public void activateUser(){
+        this.activated = true;
     }
 }

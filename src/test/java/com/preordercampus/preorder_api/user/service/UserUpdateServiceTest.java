@@ -27,6 +27,8 @@ class UserUpdateServiceTest {
     private AuthFindService authFindService;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private MailService mailService;
 
     @InjectMocks
     private UserUpdateService userUpdateService;
@@ -35,7 +37,7 @@ class UserUpdateServiceTest {
     void saveStudentUser() throws NotFoundException, DuplicateMemberException {
 
         UserVO user =
-                new UserVO("test@test.com", "password", "STUDENT", true, "KAKAO", null);
+                new UserVO("test@test.com", "password", "STUDENT", true, "KAKAO", "random code", null);
         user.setIdx(1L);
 
         //given
@@ -48,6 +50,7 @@ class UserUpdateServiceTest {
         when(passwordEncoder.encode(anyString()))
                 .thenReturn("encoded password");
 
+
         CreateUser.Request request = CreateUser.Request.builder()
                 .email("test@test.com")
                 .password("password")
@@ -59,5 +62,14 @@ class UserUpdateServiceTest {
 
         //then
         assertEquals(1, idx);
+    }
+
+    @Test
+    void verifyUserEmail() {
+        //given
+
+        //when
+
+        //then
     }
 }

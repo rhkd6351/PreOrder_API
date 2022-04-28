@@ -11,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+import java.util.UUID;
+
 
 @Service
 public class UserUpdateService {
@@ -45,16 +48,28 @@ public class UserUpdateService {
         UserVO user = UserVO.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .activated(true)
+                .activated(false)
                 .auth(auth)
                 .type(UserVO.Type.USER_STUDENT.value())
                 .oauth(UserVO.Oauth.valueOf(request.getOauth()).value())
+                .verifyCode(UUID.randomUUID().toString())
                 .build();
 
         Long idx = userRepository.save(user).getIdx();
-        mailService.sendIDVerifyMail(user.getEmail());
+
+        if(user.getType().equals("EMAIL"))
+            mailService.sendIDVerifyMail(user);
+        else
+            user.activateUser();
 
         return idx;
+    }
+
+    @Transactional
+    public void verifyUserEmail(String code) throws NotFoundException {
+
+        UserVO user = userRepository.findByVerifyCode(code).orElseThrow(() -> new NotFoundException("invalid user verify code"));
+        user.activateUser();
     }
 
 }

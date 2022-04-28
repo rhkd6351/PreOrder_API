@@ -24,6 +24,7 @@ class UserRepositoryTest {
             "STUDENT",
             true,
             "KAKAO",
+            "random code",
             auth);
 
 
