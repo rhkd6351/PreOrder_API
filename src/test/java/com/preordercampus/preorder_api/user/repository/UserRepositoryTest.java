@@ -1,6 +1,7 @@
 package com.preordercampus.preorder_api.user.repository;
 
 import com.preordercampus.preorder_api.user.domain.AuthVO;
+import com.preordercampus.preorder_api.user.domain.SchoolVO;
 import com.preordercampus.preorder_api.user.domain.UserVO;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
@@ -19,13 +20,18 @@ class UserRepositoryTest {
     private UserRepository userRepository;
 
     AuthVO auth = new AuthVO("ROLE_USER");
+    SchoolVO schoolVO = SchoolVO.builder()
+            .idx(1L)
+            .domain("kyonggi.ac.kr")
+            .build();
     UserVO user = new UserVO("abc@naver.com",
             "123123",
             "STUDENT",
             true,
             "KAKAO",
             "random code",
-            auth);
+            auth,
+            schoolVO);
 
 
     @Test

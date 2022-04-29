@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.UnexpectedTypeException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -89,6 +90,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> IllegalArgumentException(IllegalArgumentException e){
+        log.error("IllegalArgumentException Exception " + e.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(e.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code("A03")
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnexpectedTypeException.class)
+    public ResponseEntity<ErrorResponse> UnexpectedTypeException(UnexpectedTypeException e){
+        log.error("UnexpectedTypeException Exception " + e.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .message(e.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code("A04")
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
 
     @ExceptionHandler(Exception.class)

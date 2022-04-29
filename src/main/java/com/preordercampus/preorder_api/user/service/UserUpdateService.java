@@ -2,6 +2,7 @@ package com.preordercampus.preorder_api.user.service;
 
 
 import com.preordercampus.preorder_api.user.domain.AuthVO;
+import com.preordercampus.preorder_api.user.domain.SchoolVO;
 import com.preordercampus.preorder_api.user.domain.UserVO;
 import com.preordercampus.preorder_api.user.dto.CreateUser;
 import com.preordercampus.preorder_api.user.repository.UserRepository;
@@ -11,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -19,15 +19,18 @@ import java.util.UUID;
 public class UserUpdateService {
 
     private final UserRepository userRepository;
+
     private final AuthFindService authFindService;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final SchoolFindService schoolFindService;
 
-    public UserUpdateService(UserRepository userRepository, AuthFindService authFindService, PasswordEncoder passwordEncoder, MailService mailService) {
+    public UserUpdateService(UserRepository userRepository, AuthFindService authFindService, PasswordEncoder passwordEncoder, MailService mailService, SchoolFindService schoolFindService) {
         this.userRepository = userRepository;
         this.authFindService = authFindService;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
+        this.schoolFindService = schoolFindService;
     }
 
     @Transactional
@@ -38,12 +41,18 @@ public class UserUpdateService {
 
 
         AuthVO auth = authFindService.findByName(AuthVO.Type.ROLE_USER.value());
+        SchoolVO school = schoolFindService.findByIdx(request.getSchoolIdx());
+
 
         try{
             UserVO.Oauth.valueOf(request.getOauth());
         }catch (IllegalArgumentException e){
             throw new NotFoundException("invalid oauth name");
         }
+
+        if(!request.getEmail().split("@")[1].equals(school.getDomain()))
+            throw new IllegalArgumentException("email domain is not valid (only " + school.getDomain() + " allowed)");
+
 
         UserVO user = UserVO.builder()
                 .email(request.getEmail())
@@ -53,6 +62,7 @@ public class UserUpdateService {
                 .type(UserVO.Type.USER_STUDENT.value())
                 .oauth(UserVO.Oauth.valueOf(request.getOauth()).value())
                 .verifyCode(UUID.randomUUID().toString())
+                .school(school)
                 .build();
 
         Long idx = userRepository.save(user).getIdx();

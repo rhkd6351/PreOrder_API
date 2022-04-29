@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -24,6 +25,9 @@ public class CreateUser {
 
         @NotBlank(message = "OAuth 정보가 입력되지 않았습니다.")
         private String oauth;
+
+        @NotNull(message = "school Idx 값이 입력되지 않았습니다.")
+        private Long schoolIdx;
     }
 
     @Getter

@@ -1,6 +1,7 @@
 package com.preordercampus.preorder_api.user.service;
 
 import com.preordercampus.preorder_api.user.domain.AuthVO;
+import com.preordercampus.preorder_api.user.domain.SchoolVO;
 import com.preordercampus.preorder_api.user.domain.UserVO;
 import com.preordercampus.preorder_api.user.dto.CreateUser;
 import com.preordercampus.preorder_api.user.repository.UserRepository;
@@ -14,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
@@ -29,6 +29,8 @@ class UserUpdateServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private MailService mailService;
+    @Mock
+    private SchoolFindService schoolFindService;
 
     @InjectMocks
     private UserUpdateService userUpdateService;
@@ -36,8 +38,13 @@ class UserUpdateServiceTest {
     @Test
     void saveStudentUser() throws NotFoundException, DuplicateMemberException {
 
+        SchoolVO school = SchoolVO.builder()
+                .idx(1L)
+                .domain("kyonggi.ac.kr")
+                .build();
+
         UserVO user =
-                new UserVO("test@test.com", "password", "STUDENT", true, "KAKAO", "random code", null);
+                new UserVO("test@test.com", "password", "STUDENT", true, "KAKAO", "random code", null, school);
         user.setIdx(1L);
 
         //given
@@ -49,12 +56,14 @@ class UserUpdateServiceTest {
                 .thenReturn(new AuthVO("ROLE_USER"));
         when(passwordEncoder.encode(anyString()))
                 .thenReturn("encoded password");
+        when(schoolFindService.findByIdx(anyLong())).thenReturn(school);
 
 
         CreateUser.Request request = CreateUser.Request.builder()
-                .email("test@test.com")
+                .email("test@kyonggi.ac.kr")
                 .password("password")
                 .oauth("KAKAO")
+                .schoolIdx(1L)
                 .build();
 
         //when

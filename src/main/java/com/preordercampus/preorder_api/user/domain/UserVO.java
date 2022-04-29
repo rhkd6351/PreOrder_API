@@ -48,9 +48,14 @@ public class UserVO {
     @Column(name = "verify_code", nullable = true, updatable = true)
     private String verifyCode;
 
+    @OneToOne(targetEntity = SchoolVO.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_fk", nullable = false, updatable = true)
+    private SchoolVO school;
+
+
     //create constructor
     @Builder
-    public UserVO(String email, String password, String type, boolean activated, String oauth, String verifyCode, AuthVO auth) {
+    public UserVO(String email, String password, String type, boolean activated, String oauth, String verifyCode, AuthVO auth, SchoolVO school) {
         this.email = email;
         this.password = password;
         this.type = type;
@@ -58,6 +63,7 @@ public class UserVO {
         this.oauth = oauth;
         this.auth = auth;
         this.verifyCode = verifyCode;
+        this.school = school;
     }
 
     public enum Type{
