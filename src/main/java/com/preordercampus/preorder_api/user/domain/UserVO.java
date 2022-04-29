@@ -28,6 +28,9 @@ public class UserVO {
     @Column(name = "password", nullable = false, updatable = false)
     private String password;
 
+    @Column(name = "nickname", nullable = false, updatable = true)
+    private String nickname;
+
     @Column(name = "type", nullable = false, updatable = false)
     private String type;
 
@@ -55,7 +58,7 @@ public class UserVO {
 
     //create constructor
     @Builder
-    public UserVO(String email, String password, String type, boolean activated, String oauth, String verifyCode, AuthVO auth, SchoolVO school) {
+    public UserVO(String email, String password, String nickname, String type, boolean activated, String oauth, String verifyCode, AuthVO auth, SchoolVO school) {
         this.email = email;
         this.password = password;
         this.type = type;
@@ -64,6 +67,7 @@ public class UserVO {
         this.auth = auth;
         this.verifyCode = verifyCode;
         this.school = school;
+        this.nickname = nickname;
     }
 
     public enum Type{

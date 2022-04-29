@@ -57,6 +57,7 @@ public class UserUpdateService {
         UserVO user = UserVO.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .nickname(request.getNickname())
                 .activated(false)
                 .auth(auth)
                 .type(UserVO.Type.USER_STUDENT.value())
@@ -67,10 +68,10 @@ public class UserUpdateService {
 
         Long idx = userRepository.save(user).getIdx();
 
-        if(user.getType().equals("EMAIL"))
+        if(user.getOauth().equals("EMAIL"))
             mailService.sendIDVerifyMail(user);
         else
-            user.activateUser();
+            throw new IllegalArgumentException("EMAIL 이외 버전은 아직 지원하지 않습니다.");
 
         return idx;
     }

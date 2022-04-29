@@ -44,7 +44,7 @@ class UserUpdateServiceTest {
                 .build();
 
         UserVO user =
-                new UserVO("test@test.com", "password", "STUDENT", true, "KAKAO", "random code", null, school);
+                new UserVO("test@test.com", "password", "nickname","STUDENT", true, "KAKAO", "random code", null, school);
         user.setIdx(1L);
 
         //given
@@ -62,7 +62,7 @@ class UserUpdateServiceTest {
         CreateUser.Request request = CreateUser.Request.builder()
                 .email("test@kyonggi.ac.kr")
                 .password("password")
-                .oauth("KAKAO")
+                .oauth("EMAIL")
                 .schoolIdx(1L)
                 .build();
 

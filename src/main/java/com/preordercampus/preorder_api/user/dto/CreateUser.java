@@ -28,6 +28,9 @@ public class CreateUser {
 
         @NotNull(message = "school Idx 값이 입력되지 않았습니다.")
         private Long schoolIdx;
+
+        @NotBlank(message = "nickname이 입력되지 않았습니다.")
+        private String nickname;
     }
 
     @Getter

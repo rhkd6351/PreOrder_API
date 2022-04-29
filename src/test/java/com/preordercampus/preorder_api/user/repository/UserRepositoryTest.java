@@ -26,6 +26,7 @@ class UserRepositoryTest {
             .build();
     UserVO user = new UserVO("abc@naver.com",
             "123123",
+            "nickname",
             "STUDENT",
             true,
             "KAKAO",
