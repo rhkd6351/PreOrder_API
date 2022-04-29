@@ -51,7 +51,7 @@ public class UserVO {
     @Column(name = "verify_code", nullable = true, updatable = true)
     private String verifyCode;
 
-    @OneToOne(targetEntity = SchoolVO.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = SchoolVO.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "school_fk", nullable = false, updatable = true)
     private SchoolVO school;
 

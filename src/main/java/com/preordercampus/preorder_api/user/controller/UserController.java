@@ -1,6 +1,9 @@
 package com.preordercampus.preorder_api.user.controller;
 
+import com.preordercampus.preorder_api.user.domain.UserVO;
 import com.preordercampus.preorder_api.user.dto.CreateUser;
+import com.preordercampus.preorder_api.user.dto.UserDTO;
+import com.preordercampus.preorder_api.user.service.UserFindService;
 import com.preordercampus.preorder_api.user.service.UserUpdateService;
 import javassist.NotFoundException;
 import javassist.bytecode.DuplicateMemberException;
@@ -9,14 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.message.AuthException;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
     UserUpdateService userUpdateService;
+    UserFindService userFindService;
 
-    public UserController(UserUpdateService userUpdateService) {
+    public UserController(UserUpdateService userUpdateService, UserFindService userFindService) {
         this.userUpdateService = userUpdateService;
+        this.userFindService = userFindService;
     }
 
     @PostMapping("/v1/user")
@@ -34,6 +41,14 @@ public class UserController {
         userUpdateService.verifyUserEmail(code);
 
         return new ResponseEntity<>("user email verified", HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/user")
+    public ResponseEntity<UserDTO> getMyInfo() throws AuthException {
+        UserVO vo = userFindService.getMyUserWithAuthorities();
+        UserDTO dto = UserDTO.fromEntity(vo);
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
 
