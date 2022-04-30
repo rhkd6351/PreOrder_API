@@ -1,7 +1,5 @@
 package com.preordercampus.preorder_api.exception;
 
-import javassist.NotFoundException;
-import javassist.bytecode.DuplicateMemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -20,99 +18,77 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> NotFoundException(NotFoundException e){
-        log.error("NotFoundException " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.NOT_FOUND.value())
+
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiExceptionEntity> ApiException(ApiException e){
+        log.error("Api Exception " + e.toString());
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(e.getError().getCode())
+                .errorMessage(e.getError().getMessage())
                 .build();
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(DuplicateMemberException.class)
-    public ResponseEntity<ErrorResponse> DuplicatedException(DuplicateMemberException e){
-        log.error("Duplicated Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .build();
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiExceptionEntity, e.getError().getStatus());
     }
 
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponse> BindException(BindException e){
+    public ResponseEntity<ApiExceptionEntity> BindException(BindException e){
         log.error("Bind Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()).toString())
-                .errors(e.getBindingResult().getFieldErrors())
-                .status(HttpStatus.BAD_REQUEST.value())
-//                .code(e.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()).toString())
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
+                .errorMessage(e.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()).toString())
                 .build();
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiExceptionEntity, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<ApiExceptionEntity> MethodArgumentNotValidException(MethodArgumentNotValidException e){
         log.error("Validate Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()).toString())
-                .status(HttpStatus.BAD_REQUEST.value())
+
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(ExceptionEnum.RUNTIME_EXCEPTION.getCode())
+                .errorMessage(e.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList()).toString())
                 .build();
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiExceptionEntity, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> BadCredentialsException(BadCredentialsException e){
+    public ResponseEntity<ApiExceptionEntity> BadCredentialsException(BadCredentialsException e){
         log.error("BadCredentialsException Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .code("A01")
+
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(ExceptionEnum.ACCESS_DENIED_EXCEPTION.getCode())
+                .errorMessage(e.getMessage())
                 .build();
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(apiExceptionEntity, ExceptionEnum.ACCESS_DENIED_EXCEPTION.getStatus());
     }
 
-    @ExceptionHandler(InternalAuthenticationServiceException.class)
-    public ResponseEntity<ErrorResponse> InternalAuthenticationServiceException(InternalAuthenticationServiceException e){
-        log.error("InternalAuthenticationServiceException Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .code("A02")
-                .build();
+//    @ExceptionHandler(InternalAuthenticationServiceException.class)
+//    public ResponseEntity<ErrorResponse> InternalAuthenticationServiceException(InternalAuthenticationServiceException e){
+//        log.error("InternalAuthenticationServiceException Exception " + e.getMessage());
+//        ErrorResponse errorResponse = ErrorResponse.builder()
+//                .message(e.getMessage())
+//                .status(HttpStatus.UNAUTHORIZED.value())
+//                .code("A02")
+//                .build();
+//
+//        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+//    }
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> IllegalArgumentException(IllegalArgumentException e){
-        log.error("IllegalArgumentException Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .code("A03")
-                .build();
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(UnexpectedTypeException.class)
-    public ResponseEntity<ErrorResponse> UnexpectedTypeException(UnexpectedTypeException e){
-        log.error("UnexpectedTypeException Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .code("A04")
-                .build();
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(UnexpectedTypeException.class)
+//    public ResponseEntity<ErrorResponse> UnexpectedTypeException(UnexpectedTypeException e){
+//        log.error("UnexpectedTypeException Exception " + e.getMessage());
+//        ErrorResponse errorResponse = ErrorResponse.builder()
+//                .message(e.getMessage())
+//                .status(HttpStatus.BAD_REQUEST.value())
+//                .code("A04")
+//                .build();
+//
+//        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+//    }
 
 
     @ExceptionHandler(Exception.class)

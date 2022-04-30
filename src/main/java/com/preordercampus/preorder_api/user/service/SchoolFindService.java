@@ -1,9 +1,10 @@
 package com.preordercampus.preorder_api.user.service;
 
 
+import com.preordercampus.preorder_api.exception.ApiException;
+import com.preordercampus.preorder_api.exception.ExceptionEnum;
 import com.preordercampus.preorder_api.user.domain.SchoolVO;
 import com.preordercampus.preorder_api.user.repository.SchoolRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +18,9 @@ public class SchoolFindService {
     SchoolRepository schoolRepository;
 
     @Transactional(readOnly = true)
-    public SchoolVO findByIdx(Long idx) throws NotFoundException {
+    public SchoolVO findByIdx(Long idx){
         return schoolRepository.findById(idx).orElseThrow(
-                () -> new NotFoundException("invalid school idx"));
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_EXCEPTION));
     }
 
     @Transactional(readOnly = true)

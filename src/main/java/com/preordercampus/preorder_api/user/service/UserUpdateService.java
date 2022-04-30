@@ -1,13 +1,13 @@
 package com.preordercampus.preorder_api.user.service;
 
 
+import com.preordercampus.preorder_api.exception.ApiException;
+import com.preordercampus.preorder_api.exception.ExceptionEnum;
 import com.preordercampus.preorder_api.user.domain.AuthVO;
 import com.preordercampus.preorder_api.user.domain.SchoolVO;
 import com.preordercampus.preorder_api.user.domain.UserVO;
 import com.preordercampus.preorder_api.user.dto.CreateUser;
 import com.preordercampus.preorder_api.user.repository.UserRepository;
-import javassist.NotFoundException;
-import javassist.bytecode.DuplicateMemberException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +34,10 @@ public class UserUpdateService {
     }
 
     @Transactional
-    public Long saveStudentUser(CreateUser.Request request) throws NotFoundException, DuplicateMemberException {
+    public Long saveStudentUser(CreateUser.Request request) {
 
         if(userRepository.existsByEmail(request.getEmail()))
-            throw new DuplicateMemberException("email duplicated");
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION_MEMBER_DUPLICATED);
 
 
         AuthVO auth = authFindService.findByName(AuthVO.Type.ROLE_USER.value());
@@ -47,7 +47,7 @@ public class UserUpdateService {
         try{
             UserVO.Oauth.valueOf(request.getOauth());
         }catch (IllegalArgumentException e){
-            throw new NotFoundException("invalid oauth name");
+            throw new ApiException(ExceptionEnum.ACCESS_DENIED_EXCEPTION);
         }
 
         if(!request.getEmail().split("@")[1].equals(school.getDomain()))
@@ -77,9 +77,9 @@ public class UserUpdateService {
     }
 
     @Transactional
-    public void verifyUserEmail(String code) throws NotFoundException {
+    public void verifyUserEmail(String code) {
 
-        UserVO user = userRepository.findByVerifyCode(code).orElseThrow(() -> new NotFoundException("invalid user verify code"));
+        UserVO user = userRepository.findByVerifyCode(code).orElseThrow(() -> new ApiException(ExceptionEnum.NOT_FOUND_EXCEPTION));
         user.activateUser();
     }
 

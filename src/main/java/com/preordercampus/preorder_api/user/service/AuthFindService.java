@@ -1,9 +1,10 @@
 package com.preordercampus.preorder_api.user.service;
 
 
+import com.preordercampus.preorder_api.exception.ApiException;
+import com.preordercampus.preorder_api.exception.ExceptionEnum;
 import com.preordercampus.preorder_api.user.domain.AuthVO;
 import com.preordercampus.preorder_api.user.repository.AuthRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,9 @@ public class AuthFindService {
     @Autowired
     AuthRepository authRepository;
 
-    public AuthVO findByName(String name) throws NotFoundException {
+    public AuthVO findByName(String name) {
         return authRepository.findById(name).orElseThrow(
-                () -> new NotFoundException("Invalid Auth Name")
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_EXCEPTION)
         );
     }
 
