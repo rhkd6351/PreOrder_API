@@ -43,6 +43,7 @@ public class UserDTO {
 
     public static UserDTO fromEntity(UserVO entity){
         return UserDTO.builder()
+                .idx(entity.getIdx())
                 .email(entity.getEmail())
                 .school(SchoolDTO.formEntity(entity.getSchool()))
                 .createdAt(entity.getCreatedAt())

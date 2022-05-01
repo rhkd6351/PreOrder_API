@@ -11,6 +11,7 @@ public enum ExceptionEnum {
     RUNTIME_EXCEPTION_MEMBER_DUPLICATED(HttpStatus.BAD_REQUEST, "B0002", "member duplicated"),
     RUNTIME_EXCEPTION_INVALID_DOMAIN(HttpStatus.BAD_REQUEST, "B0003", "email domain is not valid"),
     RUNTIME_EXCEPTION_NOT_SUPPORT(HttpStatus.BAD_REQUEST, "B0004", "지원하지 않는 입력방식입니다."),
+    RUNTIME_EXCEPTION_NOT_ACTIVATED(HttpStatus.BAD_REQUEST, "B0005", "활성화 되지 않았습니다."),
 
     NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "N0001"),
 

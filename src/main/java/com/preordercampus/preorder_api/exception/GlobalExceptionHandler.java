@@ -5,6 +5,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -63,17 +64,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiExceptionEntity, ExceptionEnum.ACCESS_DENIED_EXCEPTION.getStatus());
     }
 
-//    @ExceptionHandler(InternalAuthenticationServiceException.class)
-//    public ResponseEntity<ErrorResponse> InternalAuthenticationServiceException(InternalAuthenticationServiceException e){
-//        log.error("InternalAuthenticationServiceException Exception " + e.getMessage());
-//        ErrorResponse errorResponse = ErrorResponse.builder()
-//                .message(e.getMessage())
-//                .status(HttpStatus.UNAUTHORIZED.value())
-//                .code("A02")
-//                .build();
-//
-//        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
-//    }
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ApiExceptionEntity> InternalAuthenticationServiceException(InternalAuthenticationServiceException e){
+        log.error("InternalAuthenticationServiceException Exception " + e.getMessage());
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(ExceptionEnum.RUNTIME_EXCEPTION_NOT_ACTIVATED.getCode())
+                .errorMessage(e.getMessage())
+                .build();
+
+        return new ResponseEntity<>(apiExceptionEntity, ExceptionEnum.RUNTIME_EXCEPTION_NOT_ACTIVATED.getStatus());
+    }
 
 //    @ExceptionHandler(UnexpectedTypeException.class)
 //    public ResponseEntity<ErrorResponse> UnexpectedTypeException(UnexpectedTypeException e){
@@ -89,17 +89,15 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> Exception(Exception e){
-        log.error("Unknown Exception " + e.getMessage());
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+    public ResponseEntity<ApiExceptionEntity> Exception(Exception e){
+        log.error("Exception " + e.getMessage());
+        e.printStackTrace();
+        ApiExceptionEntity apiExceptionEntity = ApiExceptionEntity.builder()
+                .errorCode(ExceptionEnum.INTERNAL_SERVER_ERROR.getCode())
+                .errorMessage(e.getMessage())
                 .build();
 
-
-        e.printStackTrace();
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(apiExceptionEntity, ExceptionEnum.RUNTIME_EXCEPTION_NOT_ACTIVATED.getStatus());
     }
 }
 

@@ -8,6 +8,7 @@ import com.preordercampus.preorder_api.util.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,12 +23,24 @@ public class UserFindService {
     }
 
     @Transactional(readOnly = true)
-    public UserVO getMyUserWithAuthorities(){
-        Optional<UserVO> memberVO = SecurityUtil.getCurrentUsername().flatMap(userRepository::findByEmail);
-
-        if(memberVO.isEmpty())
-            throw new ApiException(ExceptionEnum.ACCESS_DENIED_EXCEPTION);
-
-        return memberVO.get();
+    public UserVO getMyUserWithAuthorities() {
+        return SecurityUtil.getCurrentUsername().flatMap(userRepository::findByEmail)
+                .orElseThrow(
+                        () -> new ApiException(ExceptionEnum.ACCESS_DENIED_EXCEPTION)
+                );
     }
+
+    @Transactional(readOnly = true)
+    public UserVO findByIdx(Long idx) {
+        return userRepository.findById(idx).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_EXCEPTION)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserVO> findAll() {
+        return userRepository.findAll();
+    }
+
+
 }

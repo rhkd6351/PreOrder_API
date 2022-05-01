@@ -1,5 +1,7 @@
 package com.preordercampus.preorder_api.user.service;
 
+import com.preordercampus.preorder_api.exception.ApiException;
+import com.preordercampus.preorder_api.exception.ExceptionEnum;
 import com.preordercampus.preorder_api.user.domain.UserVO;
 import com.preordercampus.preorder_api.user.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional
     org.springframework.security.core.userdetails.User createUser(String email, UserVO user) {
         if (!user.isActivated()) {
-            throw new RuntimeException(email + " -> 활성화되어 있지 않습니다.");
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION_NOT_ACTIVATED);
         }
         List<GrantedAuthority> grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getAuth().getName()));
 

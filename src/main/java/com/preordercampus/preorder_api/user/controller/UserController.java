@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -45,6 +48,13 @@ public class UserController {
         UserDTO dto = UserDTO.fromEntity(vo);
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/admin/users")
+    public ResponseEntity<List<UserDTO>> getAllUser() {
+        List<UserDTO> users = userFindService.findAll().stream().map(UserDTO::fromEntity).collect(Collectors.toList());
+
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
 
