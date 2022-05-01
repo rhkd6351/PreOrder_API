@@ -51,7 +51,7 @@ public class UserUpdateService {
         }
 
         if(!request.getEmail().split("@")[1].equals(school.getDomain()))
-            throw new IllegalArgumentException("email domain is not valid (only " + school.getDomain() + " allowed)");
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION_INVALID_DOMAIN);
 
 
         UserVO user = UserVO.builder()
@@ -71,7 +71,7 @@ public class UserUpdateService {
         if(user.getOauth().equals("EMAIL"))
             mailService.sendIDVerifyMail(user);
         else
-            throw new IllegalArgumentException("EMAIL 이외 버전은 아직 지원하지 않습니다.");
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION_NOT_SUPPORT);
 
         return idx;
     }
