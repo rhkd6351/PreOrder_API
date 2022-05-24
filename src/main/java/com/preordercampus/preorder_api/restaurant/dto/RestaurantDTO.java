@@ -29,22 +29,23 @@ public class RestaurantDTO {
 
     private Long state;
 
-    private UserVO owner;
+    private CategoryDTO category;
 
-    private SchoolVO school;
+//    private UserVO owner;
 
-    private RestaurantCategoryVO category;
+//    private SchoolVO school;
 
-    private RestaurantGroupVO group;
+//    private RestaurantGroupVO group;
 
     @Builder
-    public RestaurantDTO(Long idx, String name, String description, boolean activated, LocalDateTime createdAt, Long state) {
+    public RestaurantDTO(Long idx, String name, String description, boolean activated, LocalDateTime createdAt, Long state, CategoryDTO category) {
         this.idx = idx;
         this.name = name;
         this.description = description;
         this.activated = activated;
         this.createdAt = createdAt;
         this.state = state;
+        this.category = category;
     }
 
     public static RestaurantDTO fromEntity(RestaurantVO entity){
@@ -55,6 +56,7 @@ public class RestaurantDTO {
                 .name(entity.getName())
                 .createdAt(entity.getCreatedAt())
                 .state(entity.getState())
+                .category(CategoryDTO.fromEntity(entity.getCategory()))
                 .build();
     }
 
