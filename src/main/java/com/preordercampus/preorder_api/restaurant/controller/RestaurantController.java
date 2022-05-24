@@ -1,7 +1,9 @@
 package com.preordercampus.preorder_api.restaurant.controller;
 
+import com.preordercampus.preorder_api.restaurant.domain.RestaurantVO;
 import com.preordercampus.preorder_api.restaurant.dto.CategoryDTO;
 import com.preordercampus.preorder_api.restaurant.dto.CreateRestaurant;
+import com.preordercampus.preorder_api.restaurant.dto.RestaurantDTO;
 import com.preordercampus.preorder_api.restaurant.dto.RestaurantGroupDTO;
 import com.preordercampus.preorder_api.restaurant.service.CategoryFindService;
 import com.preordercampus.preorder_api.restaurant.service.RestaurantFindService;
@@ -52,6 +54,19 @@ public class RestaurantController {
         List<RestaurantGroupDTO> groups = restaurantGroupFindService.findAllWithRestaurantsBySchool(school);
 
         return new ResponseEntity<>(groups, HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/user/school/{school-idx}/restaurants/category/{category-idx}")
+    public ResponseEntity<List<RestaurantDTO>> getByCategory(
+            @PathVariable(value = "category-idx") Long categoryIdx,
+            @PathVariable(value = "school-idx") Long schoolIdx){
+
+        SchoolVO school = schoolFindService.findByIdx(schoolIdx);
+
+        List<RestaurantVO> restaurants = restaurantFindService.getRestaurantBySchoolAndCategory(school, categoryIdx);
+        List<RestaurantDTO> result = restaurants.stream().map(RestaurantDTO::fromEntity).collect(Collectors.toList());
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/v1/user/restaurants/categories")

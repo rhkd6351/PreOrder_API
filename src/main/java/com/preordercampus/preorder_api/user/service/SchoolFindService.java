@@ -24,6 +24,12 @@ public class SchoolFindService {
     }
 
     @Transactional(readOnly = true)
+    public SchoolVO findByIdxAndCategory(Long idx, Long categoryIdx){
+        return schoolRepository.findById(idx).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_EXCEPTION));
+    }
+
+    @Transactional(readOnly = true)
     public List<SchoolVO> findAll(){
         return schoolRepository.findAll();
     }
